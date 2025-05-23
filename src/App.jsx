@@ -1,34 +1,88 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Routes, Route, useNavigate } from 'react-router-dom'
+import { useActivities } from './hooks/useActivities'
+import { useBookings } from './hooks/useBookings'
+import SearchForm from './components/SearchForm'
+import ActivityList from './components/ActivityList'
+import ActivityDetail from './components/ActivityDetail'
+import BookingConfirmation from './components/BookingConfirmation'
+import Layout from './components/ui/Layout'
+import Home from './pages/Home'
+import ActivityDetailPage from './pages/ActivityDetailPage'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [searchParams, setSearchParams] = useState({
+    date: '',
+    people: 1
+  })
+  
+  const navigate = useNavigate()
+  const { activities, loading, error, searchActivities } = useActivities()
+  const { createBooking, bookingResult } = useBookings()
+
+  const handleSearch = (date, people) => {
+    setSearchParams({ date, people })
+    searchActivities(date, people)
+    navigate('/')
+  }
+
+  const handleBookActivity = async (activityId, people, date) => {
+    try {
+      await createBooking({
+        activity_id: activityId,
+        people,
+        activity_date: date
+      })
+      navigate('/confirmation')
+    } catch (error) {
+      console.error('Booking error:', error)
+    }
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Layout>
+      <Routes>
+        <Route 
+          path="/" 
+          element={
+            <>
+              <SearchForm 
+                initialDate={searchParams.date}
+                initialPeople={searchParams.people}
+                onSearch={handleSearch}
+              />
+              <ActivityList 
+                activities={activities}
+                loading={loading}
+                error={error}
+                searchParams={searchParams}
+              />
+            </>
+          } 
+        />
+        
+        <Route 
+          path="/activity/:id" 
+          element={
+            <ActivityDetailPage 
+              searchParams={searchParams}
+              onBook={handleBookActivity}
+            />
+          } 
+        />
+        
+        <Route 
+          path="/confirmation" 
+          element={
+            <BookingConfirmation 
+              booking={bookingResult} 
+              onReturnHome={() => navigate('/')}
+            />
+          } 
+        />
+      </Routes>
+    </Layout>
   )
 }
 
