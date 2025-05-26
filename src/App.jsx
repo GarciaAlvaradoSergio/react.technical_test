@@ -28,7 +28,7 @@ export const App = () => {
       setSelectedActivity(null);
       setBookingResult(null);
     } catch (err) {
-      setError("Failed to load activities. Please try again.");
+      setError("No se pudieron cargar las actividades. Inténtalo de nuevo.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -42,7 +42,7 @@ export const App = () => {
       setSelectedActivity(data);
       setBookingResult(null);
     } catch (err) {
-      setError("Failed to load activity details. Please try again.");
+      setError("No se pudieron cargar los detalles de la actividad. Inténtalo de nuevo.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -67,7 +67,7 @@ export const App = () => {
       setSelectedActivity(data);
       setBookingResult(null);
     } catch (err) {
-      setError("Failed to load related activity. Please try again.");
+      setError("No se pudo cargar la actividad relacionada. Inténtalo de nuevo.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -96,7 +96,7 @@ export const App = () => {
       setBookingResult(booking);
       setSelectedActivity(null);
     } catch (err) {
-      setError("Failed to complete booking. Please try again.");
+      setError("No se pudo completar la reserva. Inténtalo de nuevo.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -115,43 +115,89 @@ export const App = () => {
         Reserva de actividades
       </h1>
 
-      <main className="row mt-5">
-        {error && <div className="error-message">{error}</div>}
-        {loading && <div className="loading-overlay">Loading...</div>}
+      <main className="row mt-5 position-relative">
+        {/* Error Message */}
+        {error && (
+          <div className="col-12">
+            <div className="alert alert-danger alert-dismissible fade show" role="alert">
+              {error}
+              <button 
+                type="button" 
+                className="btn-close" 
+                onClick={() => setError(null)}
+                aria-label="Close"
+              ></button>
+            </div>
+          </div>
+        )}
 
+        {/* Loading Overlay */}
+        {loading && (
+          <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-light bg-opacity-75" style={{ zIndex: 1000 }}>
+            <div className="text-center">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+              <p className="mt-2 text-primary">Cargando...</p>
+            </div>
+          </div>
+        )}
+
+        {/* Search Form and Activity List */}
         {!bookingResult && !selectedActivity && (
           <>
-            <div className="col-md-6">
-              <SearchForm onSearch={handleSearch} />
+            <div className="col-lg-5 col-md-6 mb-4">
+              <div className="card shadow-sm">
+                <div className="card-body">
+                  <SearchForm onSearch={handleSearch} />
+                </div>
+              </div>
             </div>
-            <div className="col-md-6">
-              <ActivityList
-                activities={activities}
-                people={searchParams.people}
-                date={searchParams.date}
-                onSelect={handleSelectActivity}
-                onBook={handleBookActivity}
-              />
+            <div className="col-lg-7 col-md-6">
+              <div className="card shadow-sm">
+                <div className="card-body">
+                  {activities.length > 0 ? (
+                    <ActivityList
+                      activities={activities}
+                      people={searchParams.people}
+                      date={searchParams.date}
+                      onSelect={handleSelectActivity}
+                      onBook={handleBookActivity}
+                    />
+                  ) : (
+                    <div className="text-center py-5">
+                      <i className="bi bi-calendar-event fs-1 text-muted"></i>
+                      <p className="mt-3 text-muted">Realiza una búsqueda para ver las actividades disponibles</p>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           </>
         )}
 
+        {/* Activity Details */}
         {selectedActivity && !bookingResult && (
-          <ActivityDetail
-            activity={selectedActivity}
-            people={searchParams.people}
-            date={searchParams.date}
-            onBook={handleBookActivity}
-            onBack={handleBackFromRelated}
-            onSelectRelated={handleSelectRelatedActivity}
-          />
+          <div className="col-12">
+            <ActivityDetail
+              activity={selectedActivity}
+              people={searchParams.people}
+              date={searchParams.date}
+              onBook={handleBookActivity}
+              onBack={handleBackFromRelated}
+              onSelectRelated={handleSelectRelatedActivity}
+            />
+          </div>
         )}
 
+        {/* Booking Confirmation */}
         {bookingResult && (
-          <BookingConfirmation
-            booking={bookingResult}
-            onNewSearch={handleNewSearch}
-          />
+          <div className="col-12">
+            <BookingConfirmation
+              booking={bookingResult}
+              onNewSearch={handleNewSearch}
+            />
+          </div>
         )}
       </main>
     </div>
