@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "axios": "^1.6.7",
+    "bootstrap": "^5.3.6",
     "date-fns": "^3.6.0",
     "prop-types": "^15.8.1",
     "react": "^19.1.0",

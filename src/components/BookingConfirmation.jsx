@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export const BookingConfirmation = ({ booking, onReturnHome }) => {
+export const BookingConfirmation = ({ booking, onNewSearch }) => {
   // Función simple para formatear fechas
   const formatDate = (dateString) => {
     const options = { 
@@ -17,7 +17,7 @@ export const BookingConfirmation = ({ booking, onReturnHome }) => {
   return (
     <div style={{
       maxWidth: '500px',
-      margin: '2rem auto',
+      margin: '1rem auto',
       padding: '2rem',
       border: '1px solid #ddd',
       borderRadius: '8px',
@@ -29,7 +29,7 @@ export const BookingConfirmation = ({ booking, onReturnHome }) => {
         marginBottom: '1rem'
       }}>✓</div>
       
-      <h2>Your booking is confirmed!</h2>
+      <h2 className='text-success' >¡Su reserva está confirmada!</h2>
       
       <div style={{
         textAlign: 'left',
@@ -38,32 +38,25 @@ export const BookingConfirmation = ({ booking, onReturnHome }) => {
         backgroundColor: '#f5f5f5',
         borderRadius: '4px'
       }}>
-        <p><strong>Booking ID:</strong> #{booking.id}</p>
-        <p><strong>Activity Date:</strong> {formatDate(booking.activity_date)}</p>
-        <p><strong>Participants:</strong> {booking.people}</p>
-        <p><strong>Booked on:</strong> {formatDate(booking.booking_date)}</p>
+        <p><strong>Reserva ID:</strong> #{booking.id}</p>
+        <p><strong>Fecha de la actividad:</strong> {formatDate(booking.activity_date)}</p>
+        <p><strong>Participantes:</strong> {booking.people}</p>
+        <p><strong>Reservado el:</strong> {formatDate(booking.booking_date)}</p>
         <p style={{
           marginTop: '1rem',
           paddingTop: '1rem',
           borderTop: '1px solid #ddd',
           fontSize: '1.2rem'
         }}>
-          <strong>Total Paid:</strong> ${booking.booking_price.toFixed(2)}
+          <strong>Total a pagar:</strong> ${Number(booking.booking_price).toFixed(2)}
         </p>
       </div>
       
       <button 
-        onClick={onReturnHome}
-        style={{
-          padding: '0.5rem 1rem',
-          backgroundColor: '#0066cc',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
+        onClick={onNewSearch}
+        className='btn btn-primary'
       >
-        Back to Home
+        Regresar a inicio
       </button>
     </div>
   );
